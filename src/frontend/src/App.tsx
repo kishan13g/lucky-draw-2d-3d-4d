@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useCallerProfile, useIsAdmin } from "./hooks/useQueries";
 import AdminDashboard from "./pages/AdminDashboard";
 import BlockedPage from "./pages/BlockedPage";
@@ -56,7 +56,7 @@ function AppRouter() {
     return <BlockedPage />;
   }
 
-  // Admin -> admin dashboard
+  // Admin -> admin dashboard (which includes lottery admin inline)
   if (isAdmin) {
     return <AdminDashboard />;
   }

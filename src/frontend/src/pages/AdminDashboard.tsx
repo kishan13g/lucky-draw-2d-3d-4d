@@ -1,3 +1,4 @@
+import { UserRole } from "@/backend";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,8 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import type { Principal } from "@icp-sdk/core/principal";
 import {
+  Dices,
   Loader2,
   Lock,
   LogOut,
@@ -20,14 +23,13 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { UserRole } from "../backend.d";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAllUsers,
   useAssignRole,
   useBlockUser,
   useUnblockUser,
 } from "../hooks/useQueries";
+import LotteryAdminPage from "../pages/LotteryAdminPage";
 
 export default function AdminDashboard() {
   const { clear, identity } = useInternetIdentity();
@@ -36,8 +38,13 @@ export default function AdminDashboard() {
   const { mutate: unblockUser, isPending: unblocking } = useUnblockUser();
   const { mutate: assignRole, isPending: assigning } = useAssignRole();
   const [pendingPrincipal, setPendingPrincipal] = useState<string | null>(null);
+  const [showLottery, setShowLottery] = useState(false);
 
   const myPrincipal = identity?.getPrincipal().toString();
+
+  if (showLottery) {
+    return <LotteryAdminPage onBack={() => setShowLottery(false)} />;
+  }
 
   const handleBlock = (principal: Principal, isBlocked: boolean) => {
     const pid = principal.toString();
@@ -134,6 +141,31 @@ export default function AdminDashboard() {
       </header>
 
       <main className="flex-1 px-4 py-6 max-w-2xl mx-auto w-full">
+        {/* Lottery Admin shortcut */}
+        <motion.button
+          data-ocid="admin.lottery_button"
+          type="button"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={() => setShowLottery(true)}
+          className="w-full mb-5 glass-card rounded-2xl p-4 flex items-center gap-3 hover:border-primary/50 transition-all text-left group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
+            <Dices className="w-5 h-5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-sm text-foreground">
+              Lottery Admin
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Players, results aur bets manage karo
+            </p>
+          </div>
+          <span className="ml-auto text-muted-foreground text-xs font-mono flex-shrink-0">
+            →
+          </span>
+        </motion.button>
+
         {/* Stats bar */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[

@@ -10,20 +10,86 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface Bet {
+  'id' : string,
+  'status' : BetStatus,
+  'rate' : bigint,
+  'betType' : BetType,
+  'mobileNumber' : string,
+  'drawType' : DrawType,
+  'potentialWin' : bigint,
+  'placedAt' : bigint,
+  'number' : string,
+  'drawLetter' : DrawLetter,
+}
+export type BetStatus = { 'won' : null } |
+  { 'pending' : null } |
+  { 'lost' : null };
+export type BetType = { 'dp' : null } |
+  { 'sp' : null } |
+  { 'box' : null } |
+  { 'straight' : null };
+export type DrawLetter = { 'A' : null } |
+  { 'B' : null } |
+  { 'C' : null };
+export interface DrawResult {
+  'winningNumber' : string,
+  'drawType' : DrawType,
+  'drawLetter' : DrawLetter,
+  'drawnAt' : bigint,
+  'drawnBy' : string,
+}
+export type DrawType = { 'fourD' : null } |
+  { 'twoD' : null } |
+  { 'threeD' : null };
+export interface MobileUser {
+  'deviceToken' : string,
+  'balance' : bigint,
+  'createdAt' : bigint,
+  'mobileNumber' : string,
+}
+export type Result = { 'ok' : string } |
+  { 'err' : string };
+export type Result_1 = { 'ok' : Bet } |
+  { 'err' : string };
+export type Result_2 = { 'ok' : MobileUser } |
+  { 'err' : string };
+export type Result_3 = { 'ok' : null } |
+  { 'err' : string };
+export type Result_4 = { 'ok' : DrawResult } |
+  { 'err' : string };
+export type Result_5 = { 'ok' : bigint } |
+  { 'err' : string };
 export interface UserProfile { 'isBlocked' : boolean, 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _SERVICE {
-  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  '_initializeAccessControl' : ActorMethod<[], undefined>,
+  'adminAdjustBalance' : ActorMethod<[string, bigint], Result_3>,
+  'adminAutoSettleDraw' : ActorMethod<[DrawType, DrawLetter], Result_5>,
+  'adminEnterResult' : ActorMethod<[DrawType, DrawLetter, string], Result_4>,
+  'adminGetAllBets' : ActorMethod<[], Array<Bet>>,
+  'adminGetAllMobileUsers' : ActorMethod<[], Array<MobileUser>>,
+  'adminSetBalance' : ActorMethod<[string, bigint], Result_3>,
+  'adminSettleBet' : ActorMethod<[string, BetStatus], Result_3>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'assignRole' : ActorMethod<[Principal, UserRole], undefined>,
   'blockUser' : ActorMethod<[Principal], undefined>,
   'getAllUsers' : ActorMethod<[], Array<[Principal, UserProfile]>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getLatestResults' : ActorMethod<[], Array<DrawResult>>,
+  'getMobileUser' : ActorMethod<[string], [] | [MobileUser]>,
+  'getMyBets' : ActorMethod<[string, string], Array<Bet>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'loginMobileUser' : ActorMethod<[string, string], Result_2>,
+  'placeBet' : ActorMethod<
+    [string, string, DrawType, DrawLetter, BetType, string, bigint],
+    Result_1
+  >,
+  'registerMobileUser' : ActorMethod<[string, string], Result>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'unblockUser' : ActorMethod<[Principal], undefined>,
 }

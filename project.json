@@ -1,0 +1,25 @@
+{
+  "overview": "Lucky Draw 2D 3D 4D is a mobile lottery game where players log in with their phone number and place bets on 2D, 3D, and 4D numbers across three daily draws (A, B, C). The admin manages player balances and enters draw results from the ControlHub dashboard, with players seeing results update automatically every 2-3 seconds.",
+  "features": [
+    "Mobile number login — one device per player",
+    "2D (00-99), 3D (000-999), and 4D (0000-9999) betting with number grids",
+    "ABC draw selection for each game type",
+    "Bet types: Straight, Box, SP, DP for 3D/4D with different payouts",
+    "Motor button to bet all numbers, Lucky button for random picks",
+    "Bet slip with rate picker and potential winnings display",
+    "Live results bar polling every 2.5 seconds",
+    "Bet history with Pending/Won/Lost status",
+    "Admin balance management (add/deduct) per player",
+    "Admin result entry with auto-settlement of bets"
+  ],
+  "category": "games-entertainment",
+  "tags": [
+    "lottery",
+    "lucky-draw",
+    "2d-3d-4d",
+    "betting",
+    "mobile-game",
+    "admin-dashboard"
+  ],
+  "last_updated": "2026-05-12T19:57:23.422Z"
+}

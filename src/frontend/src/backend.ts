@@ -89,9 +89,97 @@ export class ExternalBlob {
         return this;
     }
 }
+export type Result_2 = {
+    __kind__: "ok";
+    ok: MobileUser;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface Bet {
+    id: string;
+    status: BetStatus;
+    rate: bigint;
+    betType: BetType;
+    mobileNumber: string;
+    drawType: DrawType;
+    potentialWin: bigint;
+    placedAt: bigint;
+    number: string;
+    drawLetter: DrawLetter;
+}
+export type Result_5 = {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_1 = {
+    __kind__: "ok";
+    ok: Bet;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_4 = {
+    __kind__: "ok";
+    ok: DrawResult;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface DrawResult {
+    winningNumber: string;
+    drawType: DrawType;
+    drawLetter: DrawLetter;
+    drawnAt: bigint;
+    drawnBy: string;
+}
+export type Result = {
+    __kind__: "ok";
+    ok: string;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type Result_3 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface MobileUser {
+    deviceToken: string;
+    balance: bigint;
+    createdAt: bigint;
+    mobileNumber: string;
+}
 export interface UserProfile {
     isBlocked: boolean;
     name: string;
+}
+export enum BetStatus {
+    won = "won",
+    pending = "pending",
+    lost = "lost"
+}
+export enum BetType {
+    dp = "dp",
+    sp = "sp",
+    box = "box",
+    straight = "straight"
+}
+export enum DrawLetter {
+    A = "A",
+    B = "B",
+    C = "C"
+}
+export enum DrawType {
+    fourD = "fourD",
+    twoD = "twoD",
+    threeD = "threeD"
 }
 export enum UserRole {
     admin = "admin",
@@ -99,60 +187,171 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    _initializeAccessControl(): Promise<void>;
+    adminAdjustBalance(mobileNumber: string, delta: bigint): Promise<Result_3>;
+    adminAutoSettleDraw(drawType: DrawType, drawLetter: DrawLetter): Promise<Result_5>;
+    adminEnterResult(drawType: DrawType, drawLetter: DrawLetter, winningNumber: string): Promise<Result_4>;
+    adminGetAllBets(): Promise<Array<Bet>>;
+    adminGetAllMobileUsers(): Promise<Array<MobileUser>>;
+    adminSetBalance(mobileNumber: string, newBalance: bigint): Promise<Result_3>;
+    adminSettleBet(betId: string, status: BetStatus): Promise<Result_3>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignRole(user: Principal, role: UserRole): Promise<void>;
     blockUser(user: Principal): Promise<void>;
     getAllUsers(): Promise<Array<[Principal, UserProfile]>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getLatestResults(): Promise<Array<DrawResult>>;
+    getMobileUser(mobileNumber: string): Promise<MobileUser | null>;
+    getMyBets(mobileNumber: string, deviceToken: string): Promise<Array<Bet>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    loginMobileUser(mobileNumber: string, deviceToken: string): Promise<Result_2>;
+    placeBet(mobileNumber: string, deviceToken: string, drawType: DrawType, drawLetter: DrawLetter, betType: BetType, number: string, rate: bigint): Promise<Result_1>;
+    registerMobileUser(mobileNumber: string, deviceToken: string): Promise<Result>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     unblockUser(user: Principal): Promise<void>;
 }
-import type { UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { Bet as _Bet, BetStatus as _BetStatus, BetType as _BetType, DrawLetter as _DrawLetter, DrawResult as _DrawResult, DrawType as _DrawType, MobileUser as _MobileUser, Result as _Result, Result_1 as _Result_1, Result_2 as _Result_2, Result_3 as _Result_3, Result_4 as _Result_4, Result_5 as _Result_5, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
+    async _initializeAccessControl(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor._initializeAccessControlWithSecret(arg0);
+                const result = await this.actor._initializeAccessControl();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor._initializeAccessControlWithSecret(arg0);
+            const result = await this.actor._initializeAccessControl();
             return result;
+        }
+    }
+    async adminAdjustBalance(arg0: string, arg1: bigint): Promise<Result_3> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminAdjustBalance(arg0, arg1);
+                return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminAdjustBalance(arg0, arg1);
+            return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async adminAutoSettleDraw(arg0: DrawType, arg1: DrawLetter): Promise<Result_5> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminAutoSettleDraw(to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg0), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_Result_5_n7(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminAutoSettleDraw(to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg0), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_Result_5_n7(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async adminEnterResult(arg0: DrawType, arg1: DrawLetter, arg2: string): Promise<Result_4> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminEnterResult(to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg0), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg1), arg2);
+                return from_candid_Result_4_n9(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminEnterResult(to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg0), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg1), arg2);
+            return from_candid_Result_4_n9(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async adminGetAllBets(): Promise<Array<Bet>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminGetAllBets();
+                return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminGetAllBets();
+            return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async adminGetAllMobileUsers(): Promise<Array<MobileUser>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminGetAllMobileUsers();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminGetAllMobileUsers();
+            return result;
+        }
+    }
+    async adminSetBalance(arg0: string, arg1: bigint): Promise<Result_3> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminSetBalance(arg0, arg1);
+                return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminSetBalance(arg0, arg1);
+            return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async adminSettleBet(arg0: string, arg1: BetStatus): Promise<Result_3> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminSettleBet(arg0, to_candid_BetStatus_n24(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminSettleBet(arg0, to_candid_BetStatus_n24(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_Result_3_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n26(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n26(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
     async assignRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.assignRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.assignRole(arg0, to_candid_UserRole_n26(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.assignRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.assignRole(arg0, to_candid_UserRole_n26(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -188,42 +387,84 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n29(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n29(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getLatestResults(): Promise<Array<DrawResult>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLatestResults();
+                return from_candid_vec_n31(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLatestResults();
+            return from_candid_vec_n31(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getMobileUser(arg0: string): Promise<MobileUser | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMobileUser(arg0);
+                return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMobileUser(arg0);
+            return from_candid_opt_n32(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getMyBets(arg0: string, arg1: string): Promise<Array<Bet>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyBets(arg0, arg1);
+                return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyBets(arg0, arg1);
+            return from_candid_vec_n17(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
         }
     }
     async isCallerAdmin(): Promise<boolean> {
@@ -238,6 +479,48 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.isCallerAdmin();
             return result;
+        }
+    }
+    async loginMobileUser(arg0: string, arg1: string): Promise<Result_2> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.loginMobileUser(arg0, arg1);
+                return from_candid_Result_2_n33(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.loginMobileUser(arg0, arg1);
+            return from_candid_Result_2_n33(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async placeBet(arg0: string, arg1: string, arg2: DrawType, arg3: DrawLetter, arg4: BetType, arg5: string, arg6: bigint): Promise<Result_1> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.placeBet(arg0, arg1, to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg2), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg3), to_candid_BetType_n35(this._uploadFile, this._downloadFile, arg4), arg5, arg6);
+                return from_candid_Result_1_n37(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.placeBet(arg0, arg1, to_candid_DrawType_n3(this._uploadFile, this._downloadFile, arg2), to_candid_DrawLetter_n5(this._uploadFile, this._downloadFile, arg3), to_candid_BetType_n35(this._uploadFile, this._downloadFile, arg4), arg5, arg6);
+            return from_candid_Result_1_n37(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async registerMobileUser(arg0: string, arg1: string): Promise<Result> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.registerMobileUser(arg0, arg1);
+                return from_candid_Result_n39(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.registerMobileUser(arg0, arg1);
+            return from_candid_Result_n39(this._uploadFile, this._downloadFile, result);
         }
     }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
@@ -269,13 +552,185 @@ export class Backend implements backendInterface {
         }
     }
 }
-function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n5(_uploadFile, _downloadFile, value);
+function from_candid_BetStatus_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _BetStatus): BetStatus {
+    return from_candid_variant_n21(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_BetType_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _BetType): BetType {
+    return from_candid_variant_n23(_uploadFile, _downloadFile, value);
+}
+function from_candid_Bet_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Bet): Bet {
+    return from_candid_record_n19(_uploadFile, _downloadFile, value);
+}
+function from_candid_DrawLetter_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DrawLetter): DrawLetter {
+    return from_candid_variant_n16(_uploadFile, _downloadFile, value);
+}
+function from_candid_DrawResult_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DrawResult): DrawResult {
+    return from_candid_record_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_DrawType_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DrawType): DrawType {
+    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_1_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
+    return from_candid_variant_n38(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_2_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_2): Result_2 {
+    return from_candid_variant_n34(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_3_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_3): Result_3 {
+    return from_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_4_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_4): Result_4 {
+    return from_candid_variant_n10(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_5_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_5): Result_5 {
+    return from_candid_variant_n8(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_n39(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
+    return from_candid_variant_n40(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n30(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_opt_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_MobileUser]): MobileUser | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    winningNumber: string;
+    drawType: _DrawType;
+    drawLetter: _DrawLetter;
+    drawnAt: bigint;
+    drawnBy: string;
+}): {
+    winningNumber: string;
+    drawType: DrawType;
+    drawLetter: DrawLetter;
+    drawnAt: bigint;
+    drawnBy: string;
+} {
+    return {
+        winningNumber: value.winningNumber,
+        drawType: from_candid_DrawType_n13(_uploadFile, _downloadFile, value.drawType),
+        drawLetter: from_candid_DrawLetter_n15(_uploadFile, _downloadFile, value.drawLetter),
+        drawnAt: value.drawnAt,
+        drawnBy: value.drawnBy
+    };
+}
+function from_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    status: _BetStatus;
+    rate: bigint;
+    betType: _BetType;
+    mobileNumber: string;
+    drawType: _DrawType;
+    potentialWin: bigint;
+    placedAt: bigint;
+    number: string;
+    drawLetter: _DrawLetter;
+}): {
+    id: string;
+    status: BetStatus;
+    rate: bigint;
+    betType: BetType;
+    mobileNumber: string;
+    drawType: DrawType;
+    potentialWin: bigint;
+    placedAt: bigint;
+    number: string;
+    drawLetter: DrawLetter;
+} {
+    return {
+        id: value.id,
+        status: from_candid_BetStatus_n20(_uploadFile, _downloadFile, value.status),
+        rate: value.rate,
+        betType: from_candid_BetType_n22(_uploadFile, _downloadFile, value.betType),
+        mobileNumber: value.mobileNumber,
+        drawType: from_candid_DrawType_n13(_uploadFile, _downloadFile, value.drawType),
+        potentialWin: value.potentialWin,
+        placedAt: value.placedAt,
+        number: value.number,
+        drawLetter: from_candid_DrawLetter_n15(_uploadFile, _downloadFile, value.drawLetter)
+    };
+}
+function from_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _DrawResult;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: DrawResult;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: from_candid_DrawResult_n11(_uploadFile, _downloadFile, value.ok)
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    fourD: null;
+} | {
+    twoD: null;
+} | {
+    threeD: null;
+}): DrawType {
+    return "fourD" in value ? DrawType.fourD : "twoD" in value ? DrawType.twoD : "threeD" in value ? DrawType.threeD : value;
+}
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    A: null;
+} | {
+    B: null;
+} | {
+    C: null;
+}): DrawLetter {
+    return "A" in value ? DrawLetter.A : "B" in value ? DrawLetter.B : "C" in value ? DrawLetter.C : value;
+}
+function from_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: null;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    won: null;
+} | {
+    pending: null;
+} | {
+    lost: null;
+}): BetStatus {
+    return "won" in value ? BetStatus.won : "pending" in value ? BetStatus.pending : "lost" in value ? BetStatus.lost : value;
+}
+function from_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    dp: null;
+} | {
+    sp: null;
+} | {
+    box: null;
+} | {
+    straight: null;
+}): BetType {
+    return "dp" in value ? BetType.dp : "sp" in value ? BetType.sp : "box" in value ? BetType.box : "straight" in value ? BetType.straight : value;
+}
+function from_candid_variant_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -284,10 +739,119 @@ function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
-    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+function from_candid_variant_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _MobileUser;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: MobileUser;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
 }
-function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+function from_candid_variant_n38(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Bet;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: Bet;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: from_candid_Bet_n18(_uploadFile, _downloadFile, value.ok)
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n40(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: string;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: string;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: bigint;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: bigint;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_vec_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Bet>): Array<Bet> {
+    return value.map((x)=>from_candid_Bet_n18(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_DrawResult>): Array<DrawResult> {
+    return value.map((x)=>from_candid_DrawResult_n11(_uploadFile, _downloadFile, x));
+}
+function to_candid_BetStatus_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: BetStatus): _BetStatus {
+    return to_candid_variant_n25(_uploadFile, _downloadFile, value);
+}
+function to_candid_BetType_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: BetType): _BetType {
+    return to_candid_variant_n36(_uploadFile, _downloadFile, value);
+}
+function to_candid_DrawLetter_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DrawLetter): _DrawLetter {
+    return to_candid_variant_n6(_uploadFile, _downloadFile, value);
+}
+function to_candid_DrawType_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DrawType): _DrawType {
+    return to_candid_variant_n4(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n27(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: BetStatus): {
+    won: null;
+} | {
+    pending: null;
+} | {
+    lost: null;
+} {
+    return value == BetStatus.won ? {
+        won: null
+    } : value == BetStatus.pending ? {
+        pending: null
+    } : value == BetStatus.lost ? {
+        lost: null
+    } : value;
+}
+function to_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
 } | {
     user: null;
@@ -300,6 +864,55 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         user: null
     } : value == UserRole.guest ? {
         guest: null
+    } : value;
+}
+function to_candid_variant_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: BetType): {
+    dp: null;
+} | {
+    sp: null;
+} | {
+    box: null;
+} | {
+    straight: null;
+} {
+    return value == BetType.dp ? {
+        dp: null
+    } : value == BetType.sp ? {
+        sp: null
+    } : value == BetType.box ? {
+        box: null
+    } : value == BetType.straight ? {
+        straight: null
+    } : value;
+}
+function to_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DrawType): {
+    fourD: null;
+} | {
+    twoD: null;
+} | {
+    threeD: null;
+} {
+    return value == DrawType.fourD ? {
+        fourD: null
+    } : value == DrawType.twoD ? {
+        twoD: null
+    } : value == DrawType.threeD ? {
+        threeD: null
+    } : value;
+}
+function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DrawLetter): {
+    A: null;
+} | {
+    B: null;
+} | {
+    C: null;
+} {
+    return value == DrawLetter.A ? {
+        A: null
+    } : value == DrawLetter.B ? {
+        B: null
+    } : value == DrawLetter.C ? {
+        C: null
     } : value;
 }
 export interface CreateActorOptions {

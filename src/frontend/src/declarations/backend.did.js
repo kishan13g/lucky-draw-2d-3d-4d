@@ -8,6 +8,55 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const Result_3 = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+export const DrawType = IDL.Variant({
+  'fourD' : IDL.Null,
+  'twoD' : IDL.Null,
+  'threeD' : IDL.Null,
+});
+export const DrawLetter = IDL.Variant({
+  'A' : IDL.Null,
+  'B' : IDL.Null,
+  'C' : IDL.Null,
+});
+export const Result_5 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : IDL.Text });
+export const DrawResult = IDL.Record({
+  'winningNumber' : IDL.Text,
+  'drawType' : DrawType,
+  'drawLetter' : DrawLetter,
+  'drawnAt' : IDL.Int,
+  'drawnBy' : IDL.Text,
+});
+export const Result_4 = IDL.Variant({ 'ok' : DrawResult, 'err' : IDL.Text });
+export const BetStatus = IDL.Variant({
+  'won' : IDL.Null,
+  'pending' : IDL.Null,
+  'lost' : IDL.Null,
+});
+export const BetType = IDL.Variant({
+  'dp' : IDL.Null,
+  'sp' : IDL.Null,
+  'box' : IDL.Null,
+  'straight' : IDL.Null,
+});
+export const Bet = IDL.Record({
+  'id' : IDL.Text,
+  'status' : BetStatus,
+  'rate' : IDL.Nat,
+  'betType' : BetType,
+  'mobileNumber' : IDL.Text,
+  'drawType' : DrawType,
+  'potentialWin' : IDL.Int,
+  'placedAt' : IDL.Int,
+  'number' : IDL.Text,
+  'drawLetter' : DrawLetter,
+});
+export const MobileUser = IDL.Record({
+  'deviceToken' : IDL.Text,
+  'balance' : IDL.Int,
+  'createdAt' : IDL.Int,
+  'mobileNumber' : IDL.Text,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -17,9 +66,23 @@ export const UserProfile = IDL.Record({
   'isBlocked' : IDL.Bool,
   'name' : IDL.Text,
 });
+export const Result_2 = IDL.Variant({ 'ok' : MobileUser, 'err' : IDL.Text });
+export const Result_1 = IDL.Variant({ 'ok' : Bet, 'err' : IDL.Text });
+export const Result = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
 
 export const idlService = IDL.Service({
-  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  '_initializeAccessControl' : IDL.Func([], [], []),
+  'adminAdjustBalance' : IDL.Func([IDL.Text, IDL.Int], [Result_3], []),
+  'adminAutoSettleDraw' : IDL.Func([DrawType, DrawLetter], [Result_5], []),
+  'adminEnterResult' : IDL.Func(
+      [DrawType, DrawLetter, IDL.Text],
+      [Result_4],
+      [],
+    ),
+  'adminGetAllBets' : IDL.Func([], [IDL.Vec(Bet)], ['query']),
+  'adminGetAllMobileUsers' : IDL.Func([], [IDL.Vec(MobileUser)], ['query']),
+  'adminSetBalance' : IDL.Func([IDL.Text, IDL.Int], [Result_3], []),
+  'adminSettleBet' : IDL.Func([IDL.Text, BetStatus], [Result_3], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'assignRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'blockUser' : IDL.Func([IDL.Principal], [], []),
@@ -30,12 +93,22 @@ export const idlService = IDL.Service({
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getLatestResults' : IDL.Func([], [IDL.Vec(DrawResult)], ['query']),
+  'getMobileUser' : IDL.Func([IDL.Text], [IDL.Opt(MobileUser)], ['query']),
+  'getMyBets' : IDL.Func([IDL.Text, IDL.Text], [IDL.Vec(Bet)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'loginMobileUser' : IDL.Func([IDL.Text, IDL.Text], [Result_2], []),
+  'placeBet' : IDL.Func(
+      [IDL.Text, IDL.Text, DrawType, DrawLetter, BetType, IDL.Text, IDL.Nat],
+      [Result_1],
+      [],
+    ),
+  'registerMobileUser' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'unblockUser' : IDL.Func([IDL.Principal], [], []),
 });
@@ -43,15 +116,78 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const Result_3 = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+  const DrawType = IDL.Variant({
+    'fourD' : IDL.Null,
+    'twoD' : IDL.Null,
+    'threeD' : IDL.Null,
+  });
+  const DrawLetter = IDL.Variant({
+    'A' : IDL.Null,
+    'B' : IDL.Null,
+    'C' : IDL.Null,
+  });
+  const Result_5 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : IDL.Text });
+  const DrawResult = IDL.Record({
+    'winningNumber' : IDL.Text,
+    'drawType' : DrawType,
+    'drawLetter' : DrawLetter,
+    'drawnAt' : IDL.Int,
+    'drawnBy' : IDL.Text,
+  });
+  const Result_4 = IDL.Variant({ 'ok' : DrawResult, 'err' : IDL.Text });
+  const BetStatus = IDL.Variant({
+    'won' : IDL.Null,
+    'pending' : IDL.Null,
+    'lost' : IDL.Null,
+  });
+  const BetType = IDL.Variant({
+    'dp' : IDL.Null,
+    'sp' : IDL.Null,
+    'box' : IDL.Null,
+    'straight' : IDL.Null,
+  });
+  const Bet = IDL.Record({
+    'id' : IDL.Text,
+    'status' : BetStatus,
+    'rate' : IDL.Nat,
+    'betType' : BetType,
+    'mobileNumber' : IDL.Text,
+    'drawType' : DrawType,
+    'potentialWin' : IDL.Int,
+    'placedAt' : IDL.Int,
+    'number' : IDL.Text,
+    'drawLetter' : DrawLetter,
+  });
+  const MobileUser = IDL.Record({
+    'deviceToken' : IDL.Text,
+    'balance' : IDL.Int,
+    'createdAt' : IDL.Int,
+    'mobileNumber' : IDL.Text,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
   const UserProfile = IDL.Record({ 'isBlocked' : IDL.Bool, 'name' : IDL.Text });
+  const Result_2 = IDL.Variant({ 'ok' : MobileUser, 'err' : IDL.Text });
+  const Result_1 = IDL.Variant({ 'ok' : Bet, 'err' : IDL.Text });
+  const Result = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
   
   return IDL.Service({
-    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    '_initializeAccessControl' : IDL.Func([], [], []),
+    'adminAdjustBalance' : IDL.Func([IDL.Text, IDL.Int], [Result_3], []),
+    'adminAutoSettleDraw' : IDL.Func([DrawType, DrawLetter], [Result_5], []),
+    'adminEnterResult' : IDL.Func(
+        [DrawType, DrawLetter, IDL.Text],
+        [Result_4],
+        [],
+      ),
+    'adminGetAllBets' : IDL.Func([], [IDL.Vec(Bet)], ['query']),
+    'adminGetAllMobileUsers' : IDL.Func([], [IDL.Vec(MobileUser)], ['query']),
+    'adminSetBalance' : IDL.Func([IDL.Text, IDL.Int], [Result_3], []),
+    'adminSettleBet' : IDL.Func([IDL.Text, BetStatus], [Result_3], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'assignRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'blockUser' : IDL.Func([IDL.Principal], [], []),
@@ -62,12 +198,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getLatestResults' : IDL.Func([], [IDL.Vec(DrawResult)], ['query']),
+    'getMobileUser' : IDL.Func([IDL.Text], [IDL.Opt(MobileUser)], ['query']),
+    'getMyBets' : IDL.Func([IDL.Text, IDL.Text], [IDL.Vec(Bet)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'loginMobileUser' : IDL.Func([IDL.Text, IDL.Text], [Result_2], []),
+    'placeBet' : IDL.Func(
+        [IDL.Text, IDL.Text, DrawType, DrawLetter, BetType, IDL.Text, IDL.Nat],
+        [Result_1],
+        [],
+      ),
+    'registerMobileUser' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'unblockUser' : IDL.Func([IDL.Principal], [], []),
   });

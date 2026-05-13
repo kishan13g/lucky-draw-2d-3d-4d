@@ -1,0 +1,69 @@
+// Version: 1.0.0
+type BetStatus__717379593 = {#lost; #pending; #won};
+type BetType__491974714 = {#box; #dp; #sp; #straight};
+type Bet__138853995 =
+  {
+    betType : BetType__491974714;
+    drawLetter : DrawLetter__41555076;
+    drawType : DrawType__768980966;
+    id : Text;
+    mobileNumber : Text;
+    number : Text;
+    placedAt : Int;
+    potentialWin : Int;
+    rate : Nat;
+    status : BetStatus__717379593
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DrawLetter__41555076 = {#A; #B; #C};
+type DrawResult__625191077 =
+  {
+    drawLetter : DrawLetter__41555076;
+    drawType : DrawType__768980966;
+    drawnAt : Int;
+    drawnBy : Text;
+    winningNumber : Text
+  };
+type DrawType__768980966 = {#fourD; #threeD; #twoD};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MobileUser__934141063 =
+  {balance : Int; createdAt : Int; deviceToken : Text; mobileNumber : Text};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type UserProfile__491224006 = {isBlocked : Bool; name : Text};
+type UserRole__1073662873 = {#admin; #guest; #user};
+actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
+  stable lotteryState :
+    {
+      betCounter : {var next : Nat};
+      bets : Map__605269027<Text, Bet__138853995>;
+      drawResults : List__415060402<DrawResult__625191077>;
+      mobileUsers : Map__605269027<Text, MobileUser__934141063>
+    };
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__491224006>;
+      var size : Nat__490723111
+    }
+};

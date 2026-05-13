@@ -1,13 +1,16 @@
 import Map "mo:core/Map";
-import Array "mo:core/Array";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
-import MixinAuthorization "authorization/MixinAuthorization";
-import AccessControl "authorization/access-control";
+import MixinAuthorization "mo:caffeineai-authorization/MixinAuthorization";
+import AccessControl "mo:caffeineai-authorization/access-control";
+import LotteryApi "mixins/lottery-api";
+import LotteryLib "lib/lottery";
 
 actor {
   let accessControlState = AccessControl.initState();
+  let lotteryState = LotteryLib.initState();
   include MixinAuthorization(accessControlState);
+  include LotteryApi(lotteryState);
 
   public type UserProfile = {
     name : Text;

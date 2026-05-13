@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ShieldX } from "lucide-react";
 import { motion } from "motion/react";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
 export default function BlockedPage() {
   const { clear } = useInternetIdentity();

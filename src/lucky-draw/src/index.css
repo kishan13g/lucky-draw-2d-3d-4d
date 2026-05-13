@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #07070f;
+    color: #d5d5ff;
+    font-family: "Rajdhani", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #07070f;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #252550;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00d4ff;
+  }
+
+  /* Number inputs — remove arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer utilities {
+  .font-orbitron {
+    font-family: "Orbitron", monospace;
+  }
+  .font-rajdhani {
+    font-family: "Rajdhani", sans-serif;
+  }
+  .font-mono-game {
+    font-family: "Share Tech Mono", monospace;
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+  .glow-green {
+    box-shadow: 0 0 20px rgba(0, 232, 122, 0.4);
+  }
+  .text-glow-cyan {
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+  }
+  .text-glow-gold {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+}
